@@ -10,7 +10,7 @@ class DioDebugInterceptor implements Interceptor {
   DioDebugInterceptor({this.loggers = const [DefaultLogger()]});
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     for (var logger in loggers) {
       logger.onError(LogMessage.fromError(err));
     }

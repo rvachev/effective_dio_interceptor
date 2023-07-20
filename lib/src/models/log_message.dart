@@ -6,24 +6,24 @@ const JsonEncoder _encoder = JsonEncoder.withIndent('  ');
 
 enum LogMessageType { error, request, response }
 
-abstract class LogMessage {
+abstract interface class LogMessage {
   LogMessageType get type;
 
   LogMessage();
 
-  factory LogMessage.fromError(DioError err) = _ErrorLogMessage;
+  factory LogMessage.fromError(DioException err) = _ErrorLogMessage;
 
   factory LogMessage.fromRequest(RequestOptions options) = _RequestLogMessage;
 
   factory LogMessage.fromResponse(Response response) = _ResponseLogMessage;
 }
 
-class _ErrorLogMessage extends LogMessage {
+final class _ErrorLogMessage extends LogMessage {
   final StringBuffer _buffer;
 
   _ErrorLogMessage._(this._buffer);
 
-  factory _ErrorLogMessage(DioError err) {
+  factory _ErrorLogMessage(DioException err) {
     StringBuffer buffer = StringBuffer();
     buffer.writeln(
       '<-- ${err.message} ${(err.response?.requestOptions != null ? (err.response!.requestOptions.baseUrl + err.response!.requestOptions.path) : 'URL')}',
@@ -43,7 +43,7 @@ class _ErrorLogMessage extends LogMessage {
   String toString() => _buffer.toString();
 }
 
-class _RequestLogMessage extends LogMessage {
+final class _RequestLogMessage extends LogMessage {
   final StringBuffer _buffer;
 
   _RequestLogMessage._(this._buffer);
@@ -60,8 +60,8 @@ class _RequestLogMessage extends LogMessage {
     if (options.data != null) {
       if (options.data is FormData) {
         buffer.writeln('--FormData--');
-        buffer.writeln('Fields: ${_encoder.convert(options.data.fields)}');
-        buffer.writeln('Files: ${_encoder.convert(options.data.files)}');
+        buffer.writeln('Fields: ${options.data.fields}');
+        buffer.writeln('Files: ${options.data.files}');
       } else {
         buffer.writeln('--Body--');
         buffer.writeln(_encoder.convert(options.data));
@@ -80,7 +80,7 @@ class _RequestLogMessage extends LogMessage {
   String toString() => _buffer.toString();
 }
 
-class _ResponseLogMessage extends LogMessage {
+final class _ResponseLogMessage extends LogMessage {
   final StringBuffer _buffer;
 
   _ResponseLogMessage._(this._buffer);

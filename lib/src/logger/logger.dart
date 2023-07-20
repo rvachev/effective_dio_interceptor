@@ -1,6 +1,6 @@
 import '../models/log_message.dart';
 
-abstract class ILogger {
+abstract interface class ILogger {
   void onRequest(LogMessage message);
 
   void onResponse(LogMessage message);
